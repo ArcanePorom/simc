@@ -266,9 +266,8 @@ void frost( player_t* p )
   action_priority_list_t* precombat = p->get_action_priority_list( "precombat" );
   action_priority_list_t* aoe = p->get_action_priority_list( "aoe" );
   action_priority_list_t* cds = p->get_action_priority_list( "cds" );
-  action_priority_list_t* movement = p->get_action_priority_list( "movement" );
   action_priority_list_t* cleave = p->get_action_priority_list( "cleave" );
-  action_priority_list_t* st = p->get_action_priority_list( "st" );
+  action_priority_list_t* movement = p->get_action_priority_list( "movement" );
 
   precombat->add_action( "flask" );
   precombat->add_action( "food" );
@@ -307,7 +306,7 @@ void frost( player_t* p )
   cds->add_action( "use_item,name=spoils_of_neltharus,if=buff.spoils_of_neltharus_mastery.up|buff.spoils_of_neltharus_haste.up&buff.bloodlust.down&buff.temporal_warp.down&time>0|buff.spoils_of_neltharus_vers.up&(buff.bloodlust.up|buff.temporal_warp.up)" );
   cds->add_action( "potion,if=prev_off_gcd.icy_veins|fight_remains<60" );
   cds->add_action( "use_item,name=dreambinder_loom_of_the_great_cycle,if=(equipped.nymues_unraveling_spindle&prev_gcd.1.nymues_unraveling_spindle)|fight_remains>2" );
-  cds->add_action( "use_item,name=belorrelos_the_suncaller,if=time>5&!prev_gcd.1.flurry" );
+  cds->add_action( "use_item,name=belorrelos_the_suncaller,use_off_gcd=1,if=(gcd.remains>gcd.max-0.1|fight_remains<5)&time>5" );
   cds->add_action( "use_item,name=balefire_branch,if=(!talent.ray_of_frost&active_enemies<=2&buff.icy_veins.up&prev_gcd.1.glacial_spike|remaining_winters_chill=1&cooldown.ray_of_frost.up&time>1&active_enemies<=2|cooldown.cone_of_cold.up&prev_gcd.1.comet_storm&active_enemies>=3)|fight_remains<20" );
   cds->add_action( "flurry,if=time=0&active_enemies<=2" );
   cds->add_action( "icy_veins" );
@@ -319,13 +318,6 @@ void frost( player_t* p )
   cds->add_action( "lights_judgment" );
   cds->add_action( "fireblood" );
   cds->add_action( "ancestral_call" );
-
-  movement->add_action( "any_blink,if=movement.distance>10" );
-  movement->add_action( "ice_floes,if=buff.ice_floes.down" );
-  movement->add_action( "ice_nova" );
-  movement->add_action( "arcane_explosion,if=mana.pct>30&active_enemies>=2" );
-  movement->add_action( "fire_blast" );
-  movement->add_action( "ice_lance" );
 
   cleave->add_action( "comet_storm,if=prev_gcd.1.flurry|prev_gcd.1.cone_of_cold" );
   cleave->add_action( "flurry,target_if=min:debuff.winters_chill.stack,if=cooldown_react&((prev_gcd.1.frostbolt&buff.icicles.react>=3)|prev_gcd.1.glacial_spike|(buff.icicles.react>=3&buff.icicles.react<5&charges_fractional=2))" );
@@ -342,20 +334,12 @@ void frost( player_t* p )
   cleave->add_action( "frostbolt" );
   cleave->add_action( "call_action_list,name=movement" );
 
-  st->add_action( "comet_storm,if=prev_gcd.1.flurry|prev_gcd.1.cone_of_cold" );
-  st->add_action( "flurry,if=cooldown_react&remaining_winters_chill=0&debuff.winters_chill.down&((prev_gcd.1.frostbolt&buff.icicles.react>=3|prev_gcd.1.frostbolt&buff.brain_freeze.react)|prev_gcd.1.glacial_spike|talent.glacial_spike&buff.icicles.react=4&!buff.fingers_of_frost.react)" );
-  st->add_action( "ice_lance,if=talent.glacial_spike&debuff.winters_chill.down&buff.icicles.react=4&buff.fingers_of_frost.react" );
-  st->add_action( "ray_of_frost,if=remaining_winters_chill=1" );
-  st->add_action( "glacial_spike,if=buff.icicles.react=5&(action.flurry.cooldown_react|remaining_winters_chill)" );
-  st->add_action( "frozen_orb,if=buff.fingers_of_frost.react<2&(!talent.ray_of_frost|cooldown.ray_of_frost.remains)" );
-  st->add_action( "cone_of_cold,if=talent.coldest_snap&cooldown.comet_storm.remains>10&cooldown.frozen_orb.remains>10&remaining_winters_chill=0&active_enemies>=3" );
-  st->add_action( "blizzard,if=active_enemies>=2&talent.ice_caller&talent.freezing_rain&(!talent.splintering_cold&!talent.ray_of_frost|buff.freezing_rain.up|active_enemies>=3)" );
-  st->add_action( "shifting_power,if=cooldown.frozen_orb.remains>10&(!talent.comet_storm|cooldown.comet_storm.remains>10)&(!talent.ray_of_frost|cooldown.ray_of_frost.remains>10)|cooldown.icy_veins.remains<20" );
-  st->add_action( "glacial_spike,if=buff.icicles.react=5" );
-  st->add_action( "ice_lance,if=buff.fingers_of_frost.react&!prev_gcd.1.glacial_spike|remaining_winters_chill" );
-  st->add_action( "ice_nova,if=active_enemies>=4" );
-  st->add_action( "frostbolt" );
-  st->add_action( "call_action_list,name=movement" );
+  movement->add_action( "any_blink,if=movement.distance>10" );
+  movement->add_action( "ice_floes,if=buff.ice_floes.down" );
+  movement->add_action( "ice_nova" );
+  movement->add_action( "arcane_explosion,if=mana.pct>30&active_enemies>=2" );
+  movement->add_action( "fire_blast" );
+  movement->add_action( "ice_lance" );
 }
 //frost_apl_end
 
